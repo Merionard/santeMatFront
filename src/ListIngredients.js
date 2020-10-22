@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from 'ag-grid-react';
+import {  Link } from 'react-router-dom';
+
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
@@ -18,19 +20,31 @@ function ListIngredients() {
             .then(rowData => setRowData(rowData))
     }, []);
 
+    const columnDefs = [
+        {field: 'categorie', filter: true, sortable: true,},
+        {
+            field: 'nom',
+            cellRenderer: function (params) {
+                console.log(params);
+                return `<a href="/ingredient/${params.data.nom}">${params.data.nom}</a>`;
+            },
+            filter: true,
+            sortable: true,
+        },
+        {field: 'apportNutritionnel.potassium', headerName: 'potassium'},
+        {field: 'apportNutritionnel.sodium', headerName: 'sodium'},
+        {field: 'apportNutritionnel.calcium', headerName: 'calcium'},
+        {field: 'apportNutritionnel.magnesium', headerName: 'magnesium'},
+        {field: 'apportNutritionnel.phosphore', headerName: 'phosphore'},
+        {field: 'typeComptabilisation'}
+    ];
+
 
     return (
         <div className="ag-theme-alpine" style={{height: 400, width: 1700}}>
             <AgGridReact
-                rowData={rowData}>
-                <AgGridColumn field="categorie" sortable={true}></AgGridColumn>
-                <AgGridColumn field="nom" sortable={true} filter={true}></AgGridColumn>
-                <AgGridColumn field="apportNutritionnel.potassium"></AgGridColumn>
-                <AgGridColumn field="apportNutritionnel.sodium"></AgGridColumn>
-                <AgGridColumn field="apportNutritionnel.calcium"></AgGridColumn>
-                <AgGridColumn field="apportNutritionnel.magnesium"></AgGridColumn>
-                <AgGridColumn field="apportNutritionnel.phosphore"></AgGridColumn>
-                <AgGridColumn field="typeComptabilisation"></AgGridColumn>
+                rowData={rowData}
+                columnDefs={columnDefs}>
             </AgGridReact>
         </div>
     );
