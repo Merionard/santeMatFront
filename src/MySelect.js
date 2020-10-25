@@ -16,7 +16,7 @@ class MySelect extends React.Component {
     render() {
         console.log('defaultIndex: '+this.props.defaultValue);
         return (
-            <div style={{ margin: '1rem 0' }}>
+            <div>
                 <label htmlFor={this.props.label}>{this.props.label}</label>
                 <Select
                     id={this.props.id}
