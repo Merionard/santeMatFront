@@ -1,5 +1,5 @@
 import React from "react";
-import {Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import MySelect from "./MySelect";
 import ligneRecette from"./ligneRecette.css"
@@ -13,7 +13,8 @@ function LigneRecette(props) {
                         name="listeIngredients"
                         id="listeIngredients"
                         label="liste Ingredients"
-                        options={categorieOptions}>
+                        options={props.listIngredients}
+                        handleChange={props.handleChange}>
                     </MySelect>
                 </Col>
                 <Col>
@@ -26,19 +27,16 @@ function LigneRecette(props) {
                     name="quantite"
                 />
                 </Col>
+                <Col>
+                    <Button variant="primary"  onClick={()=>props.delete(props.count)}>
+                        Supprimer la ligne
+                    </Button>
+                </Col>
             </Form.Row>
         </Form.Row>
 
     )
 }
 
-const categorieOptions = [
-    {value: 'LEGUME', label: 'Legume'},
-    {value: 'FRUITS', label: 'Fruits'},
-    {value: 'POISSON', label: 'Poisson'},
-    {value: 'VIANDE', label: 'Viande'},
-    {value: 'FECULENT', label: 'Feculent'},
-    {value: 'HERBE', label: 'Herbe'},
-];
 
 export default LigneRecette;

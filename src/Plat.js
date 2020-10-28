@@ -1,48 +1,70 @@
 import React from "react";
 import Container from "react-bootstrap/Container";
-import {Button, Form} from "react-bootstrap";
+import {Form} from "react-bootstrap";
 import Recette from "./Recette";
-import BorderPage from "./Recette";
 import LigneRecette from "./LigneRecette";
 import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 
-
+const ingredientOptions = initOptions();
 class Plat extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {nomPlat: '', lignesRecette:[],listIngredients:{}};
+        this.state = {nomPlat: '',
+            lignesRecette: [],
+            apportNutritionnel:{potassium:0,calcium:0,magnesium:0,sodium:0,phosphore:0},
+            listeIngredients:[],count:0
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.addLine = this.addLine.bind(this);
-        this.init = this.init.bind(this);
-        this.init();
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+        this.deleteLine = this.deleteLine.bind(this);
+
     }
 
     handleSubmit() {
 
     }
 
-    handleChange() {
+    handleChange(event) {
+        console.log('event:' + event)
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    }
 
+    handleSelectChange(event, stateNameAttr) {
+        let listIngredients = this.state.listeIngredients.slice();
+        listIngredients.push(event.value)
+        this.setState({
+            listeIngredients: listIngredients
+        })
     }
 
     addLine() {
         let lignes = this.state.lignesRecette.slice();
-        lignes.push(<LigneRecette key={this.state.lignesRecette.length+1}/>);
-        this.setState({lignesRecette: lignes});
+        lignes.push(<LigneRecette
+            key={this.state.lignesRecette.length}
+            count={this.state.count}
+            listIngredients={ingredientOptions}
+            handleChange={this.handleSelectChange}
+            delete = {(index)=>this.deleteLine(index)}/>);
+        this.setState({lignesRecette: lignes,count:this.state.count+1});
 
     }
 
-     init(){
-        fetch('http://localhost:8080/ingredient/list')
-            .then(result => result.json())
-            .then(ingredients=>this.setState({listIngredients:ingredients}))
+    deleteLine(count){
+        let lignes = this.state.lignesRecette;
+        const findLigne = (obj) => obj.props.count === count;
+        lignes.splice(lignes.findIndex(findLigne), 1);
+        this.setState({lignesRecette:lignes});
     }
+
 
     render() {
         return <Container>
-            <Form  onSubmit={this.handleSubmit}>
+            <Form onSubmit={this.handleSubmit}>
                 <Form.Group>
                     <Form.Label>Nom du plat</Form.Label>
                     <Form.Control
@@ -54,10 +76,19 @@ class Plat extends React.Component {
                     />
                 </Form.Group>
                 <CompteurApportNutritionnel/>
-                <Recette handleClick = {this.addLine} lignesRecette ={this.state.lignesRecette}/>
+                <Recette handleClick={this.addLine} lignesRecette={this.state.lignesRecette}/>
             </Form>
         </Container>
     }
+
+}
+
+function initOptions() {
+    let options = [];
+    fetch('http://localhost:8080/ingredient/list')
+        .then(result => result.json())
+        .then(ingredients => ingredients.map(ingredient=>options.push({value:ingredient,label:ingredient.nom})));
+    return options;
 
 }
 
