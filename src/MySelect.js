@@ -9,7 +9,7 @@ class MySelect extends React.Component {
     }
 
     handleChange(event){
-        this.props.handleChange(event,this.props.name);
+        this.props.handleChange(event,this.props.name,this.props.count);
     }
 
 

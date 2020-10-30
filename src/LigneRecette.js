@@ -14,7 +14,8 @@ function LigneRecette(props) {
                         id="listeIngredients"
                         label="liste Ingredients"
                         options={props.listIngredients}
-                        handleChange={props.handleChange}>
+                        handleChange={props.handleChange}
+                        count = {props.count}>
                     </MySelect>
                 </Col>
                 <Col>
@@ -25,13 +26,12 @@ function LigneRecette(props) {
                     placeholder="quantite"
                     id="quantite"
                     name="quantite"
+                    onChange={(event)=>props.handleQteChange(event,props.count)}
                 />
                 </Col>
-                <Col>
-                    <Button variant="primary"  onClick={()=>props.delete(props.count)}>
+                    <Button variant="primary" style={{margin:31}}  onClick={()=>props.delete(props.count)}>
                         Supprimer la ligne
                     </Button>
-                </Col>
             </Form.Row>
         </Form.Row>
 

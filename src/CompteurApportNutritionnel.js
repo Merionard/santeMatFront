@@ -23,6 +23,7 @@ class CompteurApportNutritionnel extends React.Component{
                                 id="potassium"
                                 name="potassium"
                                 readOnly
+                                value={this.props.apportNutritionnel.potassium}
                             />
                         </Form.Group>
 
@@ -35,6 +36,7 @@ class CompteurApportNutritionnel extends React.Component{
                                 id="calcium"
                                 name="calcium"
                                 readOnly
+                                value={this.props.apportNutritionnel.calcium}
                             />
                         </Form.Group>
 
@@ -47,6 +49,7 @@ class CompteurApportNutritionnel extends React.Component{
                                 id="magnesium"
                                 name="magnesium"
                                 readOnly
+                                value={this.props.apportNutritionnel.magnesium}
                             />
                         </Form.Group>
 
@@ -59,6 +62,7 @@ class CompteurApportNutritionnel extends React.Component{
                                 id="sodium"
                                 name="sodium"
                                 readOnly
+                                value={this.props.apportNutritionnel.sodium}
                             />
                         </Form.Group>
 
@@ -71,6 +75,7 @@ class CompteurApportNutritionnel extends React.Component{
                                 id="phosphore"
                                 name="phosphore"
                                 readOnly
+                                value={this.props.apportNutritionnel.phosphore}
                             />
                         </Form.Group>
                     </Form.Row>
