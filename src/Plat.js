@@ -42,11 +42,15 @@ class Plat extends React.Component {
         // ajout de la quantité à la ligne correspondante
         const findLigne = (line) => line.count === count;
         let line = this.state.dataLines.find(findLigne);
+        let deltaQuantite = isNaN(parseFloat(event.target.value)) ? 0 - line.quantite : parseFloat(event.target.value) - line.quantite;
         line.quantite = isNaN(parseFloat(event.target.value)) ? 0 : parseFloat(event.target.value);
+        let dataLines = this.state.dataLines.slice();
+        dataLines.splice(dataLines.findIndex(l => l.count === line.count), 1, line);
+        this.setState({dataLines: dataLines});
 
         // maj apportNutriotionnel (seulement si un ingrédient est sélectionné)
-        if (line.ingredient.nom !== 'undefined') {
-            this.majApportNutritionnel(this.calculApportNutritionnel(line));
+        if (line.ingredient.nom !== undefined) {
+            this.majApportNutritionnel(this.calculApportNutritionnel(line.ingredient, deltaQuantite));
         }
     }
 
@@ -54,22 +58,26 @@ class Plat extends React.Component {
         // ajout de l'ingrédient à la line correspondante
         const findLigne = (line) => line.count === count;
         let line = this.state.dataLines.find(findLigne);
+        // dans le cas où on changerait d'ingrédient avec une quantité déjà saisie il faut annuler l'apport du précédent ingrédient
+        if(line.ingredient.nom !== undefined && line.ingredient !== event.value){
+            this.majApportNutritionnel(this.calculApportNutritionnel(line.ingredient, line.quantite * -1));
+        }
         line.ingredient = event.value;
 
         // maj apportNutritionnel
-        this.majApportNutritionnel(this.calculApportNutritionnel(line));
+        this.majApportNutritionnel(this.calculApportNutritionnel(line.ingredient, line.quantite));
 
 
     }
 
-    calculApportNutritionnel(lineData) {
-        let ingredient = lineData.ingredient;
+    calculApportNutritionnel(ingredient, deltaQuantite) {
+
         let apport = {
-            potassium: ingredient.apportNutritionnel.potassium * lineData.quantite,
-            calcium: ingredient.apportNutritionnel.calcium * lineData.quantite,
-            magnesium: ingredient.apportNutritionnel.magnesium * lineData.quantite,
-            sodium: ingredient.apportNutritionnel.sodium * lineData.quantite,
-            phosphore: ingredient.apportNutritionnel.sodium * lineData.quantite
+            potassium: ingredient.apportNutritionnel.potassium * deltaQuantite,
+            calcium: ingredient.apportNutritionnel.calcium * deltaQuantite,
+            magnesium: ingredient.apportNutritionnel.magnesium * deltaQuantite,
+            sodium: ingredient.apportNutritionnel.sodium * deltaQuantite,
+            phosphore: ingredient.apportNutritionnel.sodium * deltaQuantite
         }
         if (ingredient.typeComptabilisation === 'POIDS') {
             apport.potassium = apport.potassium / 100
@@ -82,23 +90,17 @@ class Plat extends React.Component {
         return apport;
     }
 
-    majApportNutritionnel(apport, remove = false) {
+    majApportNutritionnel(apport) {
 
         let apportNutritionnel = this.state.apportNutritionnel;
-        if (remove) {
-            apportNutritionnel.potassium -= apport.potassium
-            apportNutritionnel.calcium -= apport.calcium
-            apportNutritionnel.magnesium -= apport.magnesium
-            apportNutritionnel.sodium -= apport.sodium
-            apportNutritionnel.phosphore -= apport.phosphore
 
-        } else {
-            apportNutritionnel.potassium += apport.potassium
-            apportNutritionnel.calcium += apport.calcium
-            apportNutritionnel.magnesium += apport.magnesium
-            apportNutritionnel.sodium += apport.sodium
-            apportNutritionnel.phosphore += apport.phosphore
-        }
+
+        apportNutritionnel.potassium += apport.potassium
+        apportNutritionnel.calcium += apport.calcium
+        apportNutritionnel.magnesium += apport.magnesium
+        apportNutritionnel.sodium += apport.sodium
+        apportNutritionnel.phosphore += apport.phosphore
+
         this.setState({apportNutritionnel: apportNutritionnel});
     }
 
@@ -139,7 +141,7 @@ class Plat extends React.Component {
         dataLines.splice(dataLines.findIndex(line => line.count === count), 1);
 
         if (dataLine.ingredient !== undefined && dataLine.ingredient.apportNutritionnel !== undefined) {
-            this.majApportNutritionnel(this.calculApportNutritionnel(dataLine), true)
+            this.majApportNutritionnel(this.calculApportNutritionnel(dataLine.ingredient, dataLine.quantite * -1))
         }
 
         this.setState({dataLines: dataLines});
