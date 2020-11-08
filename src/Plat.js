@@ -1,9 +1,10 @@
 import React from "react";
 import Container from "react-bootstrap/Container";
-import {Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import Recette from "./Recette";
 import LigneRecette from "./LigneRecette";
 import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
+import axios from "axios";
 
 const ingredientOptions = initOptions();
 
@@ -28,6 +29,22 @@ class Plat extends React.Component {
     }
 
     handleSubmit() {
+        const result = {
+            nom: this.state.nomPlat,
+            recette: {lignes:formatRecette(this.state.dataLines)},
+            apportNutritionnel: this.state.apportNutritionnel
+        };
+
+        console.log(result);
+
+        axios.post('http://localhost:8080/plat/add', result)
+            .then(response => {
+                console.log(response)
+                alert("le plat " + result.nom + " a bien été créé")
+            })
+            .catch(error => alert('une erreur est survenue dsl...' + error));
+
+        this.props.history.push('/listIngredients');
 
     }
 
@@ -101,6 +118,12 @@ class Plat extends React.Component {
         apportNutritionnel.sodium += apport.sodium
         apportNutritionnel.phosphore += apport.phosphore
 
+        apportNutritionnel.potassium = parseFloat(apportNutritionnel.potassium.toFixed(2));
+        apportNutritionnel.calcium = parseFloat(apportNutritionnel.calcium.toFixed(2));
+        apportNutritionnel.magnesium = parseFloat(apportNutritionnel.magnesium.toFixed(2));
+        apportNutritionnel.sodium = parseFloat(apportNutritionnel.sodium.toFixed(2));
+        apportNutritionnel.phosphore = parseFloat(apportNutritionnel.phosphore.toFixed(2));
+
         this.setState({apportNutritionnel: apportNutritionnel});
     }
 
@@ -164,6 +187,9 @@ class Plat extends React.Component {
                 </Form.Group>
                 <CompteurApportNutritionnel apportNutritionnel={this.state.apportNutritionnel}/>
                 <Recette handleClick={this.addLine} lignesRecette={this.state.lignesRecette}/>
+                <Button variant="primary" type="submit">
+                    Valider
+                </Button>
             </Form>
         </Container>
     }
@@ -176,7 +202,13 @@ function initOptions() {
         .then(result => result.json())
         .then(ingredients => ingredients.map(ingredient => options.push({value: ingredient, label: ingredient.nom})));
     return options;
+}
 
+function formatRecette(dataLines) {
+    let lignes = [];
+    dataLines.forEach(l=>lignes.push({ingredient:l.ingredient,quantite:l.quantite}));
+
+    return lignes;
 }
 
 
