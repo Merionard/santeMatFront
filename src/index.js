@@ -4,23 +4,19 @@ import './index.css';
 
 import * as serviceWorker from './serviceWorker';
 import ListIngredients from "./ListIngredients";
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import FormIngredient from "./FormIngredient";
 import Plat from "./Plat";
+import ListPlats from "./ListPlats";
 
 ReactDOM.render(
     <React.StrictMode>
         <Router>
             <Switch>
-
                 <Route path='/listIngredients'><ListIngredients/></Route>
                 <Route path='/ingredient/:pathParam?'><FormIngredient/></Route>
                 <Route path='/plat'><Plat/></Route>
+                <Route path='/listPlats'><ListPlats/></Route>
             </Switch>
         </Router>
     </React.StrictMode>,

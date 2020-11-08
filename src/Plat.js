@@ -5,6 +5,7 @@ import Recette from "./Recette";
 import LigneRecette from "./LigneRecette";
 import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 const ingredientOptions = initOptions();
 
@@ -16,7 +17,8 @@ class Plat extends React.Component {
             nomPlat: '',
             lignesRecette: [],
             apportNutritionnel: {potassium: 0, calcium: 0, magnesium: 0, sodium: 0, phosphore: 0},
-            count: 0, dataLines: []
+            count: 0, dataLines: [],
+            redirect:null
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -35,16 +37,14 @@ class Plat extends React.Component {
             apportNutritionnel: this.state.apportNutritionnel
         };
 
-        console.log(result);
 
         axios.post('http://localhost:8080/plat/add', result)
             .then(response => {
                 console.log(response)
-                alert("le plat " + result.nom + " a bien été créé")
             })
             .catch(error => alert('une erreur est survenue dsl...' + error));
 
-        this.props.history.push('/listIngredients');
+        this.setState({redirect:'/listPlats'})
 
     }
 
@@ -173,6 +173,9 @@ class Plat extends React.Component {
 
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect}/>
+        }
         return <Container>
             <Form onSubmit={this.handleSubmit}>
                 <Form.Group>

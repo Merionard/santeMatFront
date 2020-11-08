@@ -4,7 +4,7 @@ import {Button, Form} from "react-bootstrap";
 import MySelect from "./MySelect";
 import Col from "react-bootstrap/Col";
 import axios from "axios";
-import {withRouter } from 'react-router-dom';
+import {Redirect, withRouter} from 'react-router-dom';
 
 class FormIngredient extends React.Component {
 
@@ -18,7 +18,8 @@ class FormIngredient extends React.Component {
             calcium: 0,
             magnesium: 0,
             sodium: 0,
-            phosphore: 0
+            phosphore: 0,
+            redirect: null,
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -90,11 +91,15 @@ class FormIngredient extends React.Component {
             })
             .catch(error => alert('une erreur est survenue dsl...' + error));
 
-        this.props.history.push('/listIngredients');
+        /*this.props.history.push('/listIngredients');*/
+        this.setState({redirect: '/listIngredients'})
 
     }
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect}/>
+        }
         return (
 
             <Container>
