@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
-
+import {Navbar} from './Navbars/Navbar'
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import Sidebar from "./Sidebar/Sidebar";
 
 
 function ListPlats() {
