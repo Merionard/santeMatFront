@@ -15,7 +15,7 @@ ReactDOM.render(
             <Switch>
                 <Route path='/listIngredients'><ListIngredients/></Route>
                 <Route path='/ingredient/:pathParam?'><FormIngredient/></Route>
-                <Route path='/plat'><Plat/></Route>
+                <Route path='/plat/:pathParam?'><Plat/></Route>
                 <Route path='/listPlats'><ListPlats/></Route>
             </Switch>
         </Router>

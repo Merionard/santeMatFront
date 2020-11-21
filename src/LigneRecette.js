@@ -14,7 +14,8 @@ function LigneRecette(props) {
                         label="liste Ingredients"
                         options={props.listIngredients}
                         handleChange={props.handleChange}
-                        count={props.count}>
+                        count={props.count}
+                        defaultValue={props.indexDefaultValue}>
                     </MySelect>
                 </Col>
                 <Col>
@@ -25,7 +26,9 @@ function LigneRecette(props) {
                         placeholder="quantite"
                         id="quantite"
                         name="quantite"
-                        onChange={(event) => props.handleQteChange(event, props.count)}
+                        onChange={(event) => props.handleQteChange(event, props.count)
+                        }
+                        defaultValue={props.quantite}
                     />
                 </Col>
                 <Button variant="primary" style={{margin: 31}} onClick={() => props.delete(props.count)}>

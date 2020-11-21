@@ -91,7 +91,6 @@ class FormIngredient extends React.Component {
             })
             .catch(error => alert('une erreur est survenue dsl...' + error));
 
-        /*this.props.history.push('/listIngredients');*/
         this.setState({redirect: '/listIngredients'})
 
     }

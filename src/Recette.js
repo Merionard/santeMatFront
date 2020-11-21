@@ -14,7 +14,7 @@ class Recette extends React.Component {
 
         let result = this.props.lignesRecette.map((component) => <li>{component}</li>);
         return <div>
-            <Button variant="primary" onClick={this.props.handleClick}>
+            <Button variant="primary" onClick={()=>this.props.handleClick()}>
                 Ajouter une ligne de recette
             </Button>
             <fieldset className="scheduler-border">

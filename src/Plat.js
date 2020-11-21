@@ -5,7 +5,7 @@ import Recette from "./Recette";
 import LigneRecette from "./LigneRecette";
 import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 import axios from "axios";
-import { Redirect } from "react-router-dom";
+import {Redirect, withRouter} from 'react-router-dom';
 
 const ingredientOptions = initOptions();
 
@@ -18,7 +18,7 @@ class Plat extends React.Component {
             lignesRecette: [],
             apportNutritionnel: {potassium: 0, calcium: 0, magnesium: 0, sodium: 0, phosphore: 0},
             count: 0, dataLines: [],
-            redirect:null
+            redirect: null
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -27,13 +27,46 @@ class Plat extends React.Component {
         this.deleteLine = this.deleteLine.bind(this);
         this.handleQteChange = this.handleQteChange.bind(this);
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
-
+        this.initialiseForm = this.initialiseForm.bind(this);
     }
+
+    componentDidMount() {
+        console.log('init....');
+        const param = this.props.match.params.pathParam;
+        if (param !== 'undefined') {
+            fetch('http://localhost:8080/plat/' + param)
+                .then(result => result.json())
+                .then(plat => {
+                    console.log(plat);
+                    return this.initialiseForm(plat)
+                })
+                .catch(error => console.log('for the url: http://localhost:8080/plat/' + param + ' error:' + error));
+        }
+    }
+
+    initialiseForm(plat) {
+        this.setState({
+            nomPlat: plat.nom,
+            apportNutritionnel: {
+                potassium: plat.apportNutritionnel.potassium,
+                sodium: plat.apportNutritionnel.sodium,
+                calcium: plat.apportNutritionnel.calcium,
+                magnesium: plat.apportNutritionnel.magnesium,
+                phosphore: plat.apportNutritionnel.phosphore
+            }
+        });
+        let count = 0;
+        plat.recette.lignes.forEach(l => {
+            count++;
+            this.addLine({count: count, ingredient: l.ingredient, quantite: l.quantite})
+        })
+    }
+
 
     handleSubmit() {
         const result = {
             nom: this.state.nomPlat,
-            recette: {lignes:formatRecette(this.state.dataLines)},
+            recette: {lignes: formatRecette(this.state.dataLines)},
             apportNutritionnel: this.state.apportNutritionnel
         };
 
@@ -44,7 +77,7 @@ class Plat extends React.Component {
             })
             .catch(error => alert('une erreur est survenue dsl...' + error));
 
-        this.setState({redirect:'/listPlats'})
+        this.setState({redirect: '/listPlats'})
 
     }
 
@@ -76,7 +109,7 @@ class Plat extends React.Component {
         const findLigne = (line) => line.count === count;
         let line = this.state.dataLines.find(findLigne);
         // dans le cas où on changerait d'ingrédient avec une quantité déjà saisie il faut annuler l'apport du précédent ingrédient
-        if(line.ingredient.nom !== undefined && line.ingredient !== event.value){
+        if (line.ingredient.nom !== undefined && line.ingredient !== event.value) {
             this.majApportNutritionnel(this.calculApportNutritionnel(line.ingredient, line.quantite * -1));
         }
         line.ingredient = event.value;
@@ -128,12 +161,20 @@ class Plat extends React.Component {
     }
 
 
-    addLine() {
+    addLine(line) {
+
         let lignes = this.state.lignesRecette.slice();
         let dataLines = this.state.dataLines.slice();
-        let count = this.state.count + 1;
+        let count = line !== undefined ? line.count : 0;
 
-        dataLines.push({count: count, ingredient: {}, quantite: 0});
+        if (line !== undefined) {
+            dataLines.push(line);
+
+        } else {
+            count = this.state.count + 1;
+            dataLines.push({count: count, ingredient: {}, quantite: 0});
+        }
+
 
         lignes.push(<LigneRecette
             key={this.state.lignesRecette.length}
@@ -141,7 +182,9 @@ class Plat extends React.Component {
             listIngredients={ingredientOptions}
             handleChange={this.handleSelectChange}
             handleQteChange={(event, count) => this.handleQteChange(event, count)}
-            delete={(index) => this.deleteLine(index)}/>);
+            delete={(index) => this.deleteLine(index)}
+            quantite={line !== undefined ? line.quantite : 0}
+            indexDefaultValue={line !== undefined ? defineIndexDefaultValue(line.ingredient.nom, ingredientOptions) : ""}/>);
 
         this.setState({
             lignesRecette: lignes,
@@ -209,10 +252,15 @@ function initOptions() {
 
 function formatRecette(dataLines) {
     let lignes = [];
-    dataLines.forEach(l=>lignes.push({ingredient:l.ingredient,quantite:l.quantite}));
+    dataLines.forEach(l => lignes.push({ingredient: l.ingredient, quantite: l.quantite}));
 
     return lignes;
 }
 
+function defineIndexDefaultValue(value, tab) {
+    const findCategorie = (obj) => obj.label === value;
+    return tab.findIndex(findCategorie);
+}
 
-export default Plat
+
+export default withRouter(Plat);
