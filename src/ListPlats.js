@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
-import {Navbar} from './Navbars/Navbar'
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import Sidebar from "./Sidebar/Sidebar";
 
 
 function ListPlats() {
@@ -18,12 +16,14 @@ function ListPlats() {
     }, []);
 
     const columnDefs = [
-        {field: 'nom',
+        {
+            field: 'nom',
             cellRenderer: function (params) {
                 return `<a href="/plat/${params.data.nom}">${params.data.nom}</a>`;
             },
             filter: true,
-            sortable: true,},
+            sortable: true,
+        },
         {field: 'apportNutritionnel.potassium', headerName: 'potassium'},
         {field: 'apportNutritionnel.sodium', headerName: 'sodium'},
         {field: 'apportNutritionnel.calcium', headerName: 'calcium'},
