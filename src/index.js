@@ -10,6 +10,7 @@ import Plat from "./Plat";
 import ListPlats from "./ListPlats";
 import Admin from "./layouts/Admin";
 import ReleveInfos from "./ReleveInfos";
+import RapportJournalier from "./RapportJournalier";
 
 ReactDOM.render(
     <React.StrictMode>
@@ -17,6 +18,7 @@ ReactDOM.render(
             <Switch>
                 {/*<Route path="/" component={Admin} />*/}
                 <Route path ="/releveInfos" component={ReleveInfos}/>
+                <Route path ="/rapportJournalier" component={RapportJournalier}/>
 {/*                <Route path='/listIngredients'><ListIngredients/></Route>
                 <Route path='/ingredient/:pathParam?'><FormIngredient/></Route>
                 <Route path='/plat/:pathParam?'><Plat/></Route>

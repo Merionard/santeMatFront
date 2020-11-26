@@ -1,6 +1,6 @@
 import React from 'react';
 import Container from "@material-ui/core/Container";
-import {Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import MySelect from "./MySelect";
 import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 import {withRouter} from "react-router-dom";
@@ -17,11 +17,11 @@ class ReleveInfos extends React.Component {
         this.addOrRemovePlat = this.addOrRemovePlat.bind(this);
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
         this.state = {
-            apportNutritionnel: new ApportNutritionnel(0,0,0,0,0),
-            tensionMontante: '',
-            tensionDescendante: '',
-            plats: [],
-            periode: '',
+            apportNutritionnel: props.new ? new ApportNutritionnel(0, 0, 0, 0, 0) : props.apportNutritionnel,
+            tensionMontante: props.new ? '' : props.tensionMontante,
+            tensionDescendante: props.new ? '' : props.tensionDescendante,
+            plats: props.new ? [] : props.plats,
+            periode: props.new ? '' : props.periode,
         }
 
     }
@@ -40,15 +40,15 @@ class ReleveInfos extends React.Component {
     }
 
     addOrRemovePlat(event) {
-        if(event == null){
+        if (event == null) {
             let plats = [];
-            this.setState({plats: plats,apportNutritionnel:this.state.apportNutritionnel.reset()})
+            this.setState({plats: plats, apportNutritionnel: this.state.apportNutritionnel.reset()})
             return;
         }
 
         let plats = [];
 
-        event.forEach(plat =>plats.push(plat.value));
+        event.forEach(plat => plats.push(plat.value));
         this.majApportNutritionnel(plats);
         this.setState({plats: plats});
     }
@@ -63,11 +63,11 @@ class ReleveInfos extends React.Component {
         }
     }
 
-    majApportNutritionnel(plats){
+    majApportNutritionnel(plats) {
         let apportNutritionnel = this.state.apportNutritionnel;
         apportNutritionnel.reset();
-        plats.forEach(plat=>apportNutritionnel.addApport(plat.apportNutritionnel))
-        this.setState({apportNutritionnel:apportNutritionnel});
+        plats.forEach(plat => apportNutritionnel.addApport(plat.apportNutritionnel))
+        this.setState({apportNutritionnel: apportNutritionnel});
     }
 
     handleChange(event) {
@@ -136,6 +136,9 @@ class ReleveInfos extends React.Component {
                     </Form.Row>
 
                     <Form.Row>
+                        <Button variant="danger" type="button" onClick={() => this.props.handleDeleteReleve(this.props.index)}>
+                            Supprimer le relevé
+                        </Button>
                     </Form.Row>
                 </Form>
             </div>
