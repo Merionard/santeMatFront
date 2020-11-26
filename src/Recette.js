@@ -1,5 +1,5 @@
 import React from "react";
-import './recette.css'
+import './assets/css/recette.css'
 import {Button} from "react-bootstrap";
 
 

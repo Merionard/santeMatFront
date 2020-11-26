@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import './assets/css/index.css';
 
 import * as serviceWorker from './serviceWorker';
 import ListIngredients from "./ListIngredients";
@@ -9,12 +9,14 @@ import FormIngredient from "./FormIngredient";
 import Plat from "./Plat";
 import ListPlats from "./ListPlats";
 import Admin from "./layouts/Admin";
+import ReleveInfos from "./ReleveInfos";
 
 ReactDOM.render(
     <React.StrictMode>
         <Router>
             <Switch>
-                <Route path="/" component={Admin} />
+                {/*<Route path="/" component={Admin} />*/}
+                <Route path ="/releveInfos" component={ReleveInfos}/>
 {/*                <Route path='/listIngredients'><ListIngredients/></Route>
                 <Route path='/ingredient/:pathParam?'><FormIngredient/></Route>
                 <Route path='/plat/:pathParam?'><Plat/></Route>
