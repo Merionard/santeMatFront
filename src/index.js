@@ -16,9 +16,9 @@ ReactDOM.render(
     <React.StrictMode>
         <Router>
             <Switch>
-                {/*<Route path="/" component={Admin} />*/}
-                <Route path ="/releveInfos" component={ReleveInfos}/>
-                <Route path ="/rapportJournalier" component={RapportJournalier}/>
+                <Route path="/" component={Admin} />
+                {/*<Route path ="/releveInfos" component={ReleveInfos}/>
+                <Route path ="/rapportJournalier" component={RapportJournalier}/>*/}
 {/*                <Route path='/listIngredients'><ListIngredients/></Route>
                 <Route path='/ingredient/:pathParam?'><FormIngredient/></Route>
                 <Route path='/plat/:pathParam?'><Plat/></Route>

@@ -22,8 +22,17 @@ import ListPlats from "./ListPlats";
 import Plat from "./Plat";
 import ListIngredients from "./ListIngredients";
 import FormIngredient from "./FormIngredient";
+import RapportJournalier from "./RapportJournalier";
 
 const dashboardRoutes = [
+
+    {
+        path: "/rapportJournalier",
+        name: "Rapport journalier",
+        icon: Dashboard,
+        component: RapportJournalier,
+        layout: "",
+    },
     {
         path: "/listPlats",
         name: "liste des Plats",

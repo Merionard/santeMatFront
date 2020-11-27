@@ -14,6 +14,8 @@ class RapportJournalier extends React.Component {
         super(props);
         this.addReleve = this.addReleve.bind(this);
         this.handleDeleteReleve = this.handleDeleteReleve.bind(this);
+        this.handleMajReleve = this.handleMajReleve.bind(this);
+        this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
 
         this.state = {
             apportNutritionnel: new ApportNutritionnel(0, 0, 0, 0, 0),
@@ -30,12 +32,24 @@ class RapportJournalier extends React.Component {
     }
 
     handleDeleteReleve(index){
-        console.log(index)
+
        let releves =  this.state.relevesInformations.slice();
-        console.log(releves)
+       this.majApportNutritionnel(new ApportNutritionnel().deltaApport(releves[index].apportNutritionnel));
        releves.splice(index,index+1);
-        console.log(releves)
        this.setState({relevesInformations:releves});
+    }
+
+    handleMajReleve(index,deltaApport,newApport){
+        let releves = this.state.relevesInformations.slice();
+        releves[index].apportNutritionnel=newApport;
+        this.setState({relevesInformations:releves});
+        this.majApportNutritionnel(deltaApport)
+    }
+
+    majApportNutritionnel(deltaApport){
+        let apportNutritionnel = this.state.apportNutritionnel;
+        apportNutritionnel.addApport(deltaApport);
+        this.setState({apportNutritionnel:apportNutritionnel});
     }
 
 
@@ -57,6 +71,7 @@ class RapportJournalier extends React.Component {
                     plats={releve.new ? null : releve.listPlats}
                     periode={releve.new ? null : releve.periode}
                     handleDeleteReleve={(index)=>this.handleDeleteReleve(index)}
+                    handleMajReleve={(index,deltaApport,currentApport)=>this.handleMajReleve(index,deltaApport,currentApport)}
                 />
             </li>)
 

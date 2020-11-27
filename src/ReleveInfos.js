@@ -42,6 +42,8 @@ class ReleveInfos extends React.Component {
     addOrRemovePlat(event) {
         if (event == null) {
             let plats = [];
+            let currentApport = this.state.apportNutritionnel;
+            this.props.handleMajReleve(this.props.index,new ApportNutritionnel().deltaApport(currentApport),currentApport);
             this.setState({plats: plats, apportNutritionnel: this.state.apportNutritionnel.reset()})
             return;
         }
@@ -64,10 +66,11 @@ class ReleveInfos extends React.Component {
     }
 
     majApportNutritionnel(plats) {
-        let apportNutritionnel = this.state.apportNutritionnel;
-        apportNutritionnel.reset();
-        plats.forEach(plat => apportNutritionnel.addApport(plat.apportNutritionnel))
-        this.setState({apportNutritionnel: apportNutritionnel});
+        let currentApport = this.state.apportNutritionnel;
+        let newApportNutritionnel =new ApportNutritionnel();
+        plats.forEach(plat => newApportNutritionnel.addApport(plat.apportNutritionnel))
+        this.setState({apportNutritionnel: newApportNutritionnel});
+        this.props.handleMajReleve(this.props.index,newApportNutritionnel.deltaApport(currentApport),newApportNutritionnel);
     }
 
     handleChange(event) {
