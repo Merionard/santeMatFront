@@ -43,7 +43,7 @@ class ReleveInfos extends React.Component {
         if (event == null) {
             let plats = [];
             let currentApport = this.state.apportNutritionnel;
-            this.props.handleMajReleve(this.props.index,new ApportNutritionnel().deltaApport(currentApport),currentApport);
+            this.props.handleMajReleve(this.props.index,new ApportNutritionnel().getDelta(currentApport),currentApport);
             this.setState({plats: plats, apportNutritionnel: this.state.apportNutritionnel.reset()})
             return;
         }
@@ -70,7 +70,7 @@ class ReleveInfos extends React.Component {
         let newApportNutritionnel =new ApportNutritionnel();
         plats.forEach(plat => newApportNutritionnel.addApport(plat.apportNutritionnel))
         this.setState({apportNutritionnel: newApportNutritionnel});
-        this.props.handleMajReleve(this.props.index,newApportNutritionnel.deltaApport(currentApport),newApportNutritionnel);
+        this.props.handleMajReleve(this.props.index,newApportNutritionnel.getDelta(currentApport),newApportNutritionnel);
     }
 
     handleChange(event) {
@@ -89,7 +89,7 @@ class ReleveInfos extends React.Component {
                     <CompteurApportNutritionnel apportNutritionnel={this.state.apportNutritionnel}/>
                     <Form.Row>
 
-                        <Form.Group className={"col-md-2"}>
+                        <Form.Group className={"col-md-3"}>
                             <MySelect
                                 name="periode"
                                 id="periode"
@@ -101,7 +101,7 @@ class ReleveInfos extends React.Component {
                     </Form.Row>
 
                     <Form.Row>
-                        <Form.Group className={"col-md-2"}>
+                        <Form.Group className={"col-md-3"}>
                             <Form.Label>Tension Montante</Form.Label>
                             <Form.Control
                                 type="number"
@@ -113,7 +113,7 @@ class ReleveInfos extends React.Component {
                             />
                         </Form.Group>
 
-                        <Form.Group className={"col-md-2"}>
+                        <Form.Group className={"col-md-3"}>
                             <Form.Label>Tension descendante</Form.Label>
                             <Form.Control
                                 type="number"

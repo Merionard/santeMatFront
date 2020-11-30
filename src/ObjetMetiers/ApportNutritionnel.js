@@ -1,11 +1,12 @@
 class ApportNutritionnel{
 
-    constructor(potassium=0,calcium=0,magnesium=0,sodium=0,phosphore=0) {
+    constructor(potassium=0,calcium=0,magnesium=0,sodium=0,phosphore=0,id) {
         this.potassium = potassium;
         this.calcium = calcium;
         this.magnesium = magnesium;
         this.sodium = sodium;
         this.phosphore = phosphore;
+        this.id = id;
     }
 
     addApport(apportNutritionnel){
@@ -17,7 +18,7 @@ class ApportNutritionnel{
         this.phosphore += apportNutritionnel.phosphore;
     }
 
-    deltaApport(apportNutritionnel){
+    getDelta(apportNutritionnel){
         let deltaPotassium = this.potassium - apportNutritionnel.potassium;
         let deltaCalcium = this.calcium - apportNutritionnel.calcium;
         let deltaMagnesium = this.magnesium - apportNutritionnel.magnesium;
@@ -34,6 +35,15 @@ class ApportNutritionnel{
         this.sodium = 0;
         this.phosphore = 0;
         return this;
+    }
+
+    static of(apport){
+        return new ApportNutritionnel(apport.potassium,
+            apport.calcium,
+            apport.magnesium,
+            apport.sodium,
+            apport.phosphore,
+            apport.id)
     }
 }
 

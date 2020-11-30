@@ -4,9 +4,9 @@ import {Button, Form} from "react-bootstrap";
 import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 import {withRouter} from "react-router-dom";
 import ApportNutritionnel from "./ObjetMetiers/ApportNutritionnel";
-import moment from "moment";
 import ReleveInfos from "./ReleveInfos";
-import ReleveInformations from "./ObjetMetiers/ReleveInformations";
+import axios from "axios";
+import Rapport from "./ObjetMetiers/Rapport";
 
 class RapportJournalier extends React.Component {
 
@@ -18,49 +18,58 @@ class RapportJournalier extends React.Component {
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
 
         this.state = {
+            rapportJournalier: props.isNew ? new Rapport() :
+                new Rapport(false, props.id, props.date, props.relevesInformations),
             apportNutritionnel: new ApportNutritionnel(0, 0, 0, 0, 0),
-            date: moment().format('DD/MM/YYYY'),
-            relevesInformations: [],
         }
 
     }
 
     addReleve() {
-        let releves = this.state.relevesInformations.slice();
-        releves.push(new ReleveInformations());
-        this.setState({relevesInformations: releves})
+        this.setState({rapportJournalier: this.state.rapportJournalier.addReleve()})
     }
 
-    handleDeleteReleve(index){
-
-       let releves =  this.state.relevesInformations.slice();
-       this.majApportNutritionnel(new ApportNutritionnel().deltaApport(releves[index].apportNutritionnel));
-       releves.splice(index,index+1);
-       this.setState({relevesInformations:releves});
+    handleDeleteReleve(index) {
+        let rapportJournalier = this.state.rapportJournalier;
+        this.majApportNutritionnel(new ApportNutritionnel().getDelta(rapportJournalier.relevesInformations[index].apportNutritionnel));
+        this.setState({rapportJournalier: rapportJournalier.deleteReleve(index)});
     }
 
-    handleMajReleve(index,deltaApport,newApport){
-        let releves = this.state.relevesInformations.slice();
-        releves[index].apportNutritionnel=newApport;
-        this.setState({relevesInformations:releves});
+    handleMajReleve(index, deltaApport, newApport) {
+        let rapportJournalier = this.state.rapportJournalier;
+        rapportJournalier.relevesInformations[index].apportNutritionnel = newApport;
+        this.setState({rapportJournalier: rapportJournalier});
         this.majApportNutritionnel(deltaApport)
     }
 
-    majApportNutritionnel(deltaApport){
+    majApportNutritionnel(deltaApport) {
         let apportNutritionnel = this.state.apportNutritionnel;
         apportNutritionnel.addApport(deltaApport);
-        this.setState({apportNutritionnel:apportNutritionnel});
+        this.setState({apportNutritionnel: apportNutritionnel});
     }
 
 
     handleSubmit() {
+
+        const result = {
+            nom: this.state.nomPlat,
+            apportNutritionnel: this.state.apportNutritionnel
+        };
+
+
+        axios.post('http://localhost:8080/plat/add', result)
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => alert('une erreur est survenue dsl...' + error));
+
 
     }
 
 
     render() {
 
-        let result = this.state.relevesInformations.map((releve, index) =>
+        let result = this.state.rapportJournalier.relevesInformations.map((releve, index) =>
             <li style={{listStyleType: "none"}}>
                 <ReleveInfos
                     index={index}
@@ -70,14 +79,21 @@ class RapportJournalier extends React.Component {
                     tensionDescendante={releve.new ? null : releve.tension.tensionDesc}
                     plats={releve.new ? null : releve.listPlats}
                     periode={releve.new ? null : releve.periode}
-                    handleDeleteReleve={(index)=>this.handleDeleteReleve(index)}
-                    handleMajReleve={(index,deltaApport,currentApport)=>this.handleMajReleve(index,deltaApport,currentApport)}
+                    handleDeleteReleve={(index) => this.handleDeleteReleve(index)}
+                    handleMajReleve={(index, deltaApport, currentApport) => this.handleMajReleve(index, deltaApport, currentApport)}
                 />
             </li>)
 
 
         return <Container>
-            <h3>Rapport journalier du {this.state.date} </h3>
+            <Form.Row>
+                <h3>Rapport journalier du {this.state.rapportJournalier.date} </h3>
+                <div className={"offset-md-6"}>
+                    <Button variant="success" type="submit">
+                        Sauvegarder
+                    </Button>
+                </div>
+            </Form.Row>
             <div className="col-md-12">
                 <Form onSubmit={this.handleSubmit}>
 
