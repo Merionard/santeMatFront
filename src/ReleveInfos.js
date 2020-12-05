@@ -6,6 +6,7 @@ import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 import {withRouter} from "react-router-dom";
 import Select from "react-select";
 import ApportNutritionnel from "./ObjetMetiers/ApportNutritionnel";
+import ReleveInformations from "./ObjetMetiers/ReleveInformations";
 
 class ReleveInfos extends React.Component {
 
@@ -13,25 +14,26 @@ class ReleveInfos extends React.Component {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeTension = this.handleChangeTension.bind(this);
         this.addOrRemovePlat = this.addOrRemovePlat.bind(this);
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
+
         this.state = {
+            relevesInformations: props.new? new ReleveInformations():
+                new ReleveInformations(props.apportNutritionnel,
+                props.periode,
+                props.tensionMontante,
+                props.tensionDesc,
+                props.listPlats,
+                false,
+                props.id),
+
             apportNutritionnel: props.new ? new ApportNutritionnel(0, 0, 0, 0, 0) : props.apportNutritionnel,
             tensionMontante: props.new ? '' : props.tensionMontante,
             tensionDescendante: props.new ? '' : props.tensionDescendante,
             plats: props.new ? [] : props.plats,
             periode: props.new ? '' : props.periode,
         }
-
-    }
-
-    componentDidMount() {
-        console.log('init....');
-        fetch('http://localhost:8080/plat/list')
-            .then(result => result.json())
-            .then(plats => initialiseListPlats(plats))
-            .catch(error => console.log('for the url: http://localhost:8080/plat/list' + +' error:' + error));
     }
 
 
@@ -41,42 +43,39 @@ class ReleveInfos extends React.Component {
 
     addOrRemovePlat(event) {
         if (event == null) {
-            let plats = [];
-            let currentApport = this.state.apportNutritionnel;
-            this.props.handleMajReleve(this.props.index,new ApportNutritionnel().getDelta(currentApport),currentApport);
-            this.setState({plats: plats, apportNutritionnel: this.state.apportNutritionnel.reset()})
+            let currentApport = this.state.relevesInformations.apportNutritionnel;
+            this.props.handleMajReleve(this.props.index,new ApportNutritionnel().getDelta(currentApport),this.state.relevesInformations);
+            this.setState({relevesInformations:this.state.relevesInformations.resetApport()})
             return;
         }
 
         let plats = [];
-
         event.forEach(plat => plats.push(plat.value));
         this.majApportNutritionnel(plats);
-        this.setState({plats: plats});
+        this.setState({relevesInformations: this.state.relevesInformations.setPlats(plats)});
     }
 
     handleSelectChange(event) {
 
-        console.log(event);
         if (event != null && event.target === 'periode') {
             this.setState({
-                periode: event.value
+                relevesInformations: this.state.relevesInformations.setPeriode(event.value)
             })
         }
     }
 
     majApportNutritionnel(plats) {
-        let currentApport = this.state.apportNutritionnel;
+        let currentApport = this.state.relevesInformations.apportNutritionnel;
         let newApportNutritionnel =new ApportNutritionnel();
         plats.forEach(plat => newApportNutritionnel.addApport(plat.apportNutritionnel))
-        this.setState({apportNutritionnel: newApportNutritionnel});
-        this.props.handleMajReleve(this.props.index,newApportNutritionnel.getDelta(currentApport),newApportNutritionnel);
+        this.setState({relevesInformations: this.state.relevesInformations.setApportNutritionnel(newApportNutritionnel)});
+        this.props.handleMajReleve(this.props.index,newApportNutritionnel.getDelta(currentApport),this.state.relevesInformations);
     }
 
-    handleChange(event) {
-        console.log('event:' + event)
+    handleChangeTension(event) {
         this.setState({
-            [event.target.name]: event.target.value
+            relevesInformations: event.target.name ==='tensionMontante'?
+                this.state.relevesInformations.setTensionMontante(event.target.value): this.state.relevesInformations.setTensionDesc(event.target.value)
         });
     }
 
@@ -86,7 +85,7 @@ class ReleveInfos extends React.Component {
             <div className="col-md-12">
                 <Form onSubmit={this.handleSubmit}>
 
-                    <CompteurApportNutritionnel apportNutritionnel={this.state.apportNutritionnel}/>
+                    <CompteurApportNutritionnel apportNutritionnel={this.state.relevesInformations.apportNutritionnel}/>
                     <Form.Row>
 
                         <Form.Group className={"col-md-3"}>
@@ -108,8 +107,8 @@ class ReleveInfos extends React.Component {
                                 step=".01"
                                 id="tensionMontante"
                                 name="tensionMontante"
-                                onChange={this.handleChange}
-                                value={this.state.tensionMontante}
+                                onChange={this.handleChangeTension}
+                                value={this.state.relevesInformations.tensionMontante}
                             />
                         </Form.Group>
 
@@ -120,8 +119,8 @@ class ReleveInfos extends React.Component {
                                 step=".01"
                                 id="tensionDescendante"
                                 name="tensionDescendante"
-                                onChange={this.handleChange}
-                                value={this.state.tensionDescendante}
+                                onChange={this.handleChangeTension}
+                                value={this.state.relevesInformations.tensionDesc}
                             />
                         </Form.Group>
 
@@ -129,7 +128,7 @@ class ReleveInfos extends React.Component {
                             <label htmlFor="Sélectionnez vos repas">Sélectionnez vos repas</label>
                             <Select
                                 id="selectRepas"
-                                options={listPlats}
+                                options={this.props.listPlats}
                                 onChange={this.addOrRemovePlat}
                                 isMulti
                                 className="basic-multi-select"
@@ -155,11 +154,5 @@ const periodeOptions = [
     {value: 'SOIR', label: 'Soir', target: 'periode'},
     {value: 'CUSTOM', label: 'Custom', target: 'periode'},
 ];
-
-const listPlats = [];
-
-function initialiseListPlats(plats) {
-    plats.map(plat => listPlats.push({label: plat.nom, value: plat, target: 'plat'}))
-}
 
 export default withRouter(ReleveInfos);

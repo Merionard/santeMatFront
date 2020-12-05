@@ -1,12 +1,13 @@
 import ReleveInformations from "./ReleveInformations";
 import moment from "moment";
+import ApportNutritionnel from "./ApportNutritionnel";
 
 class Rapport {
     constructor(isNew = true, id, date, relevesInfos) {
         if (!isNew) {
             this.id = id;
             this.date = date;
-            this.relevesInformations = [];
+            this.relevesInfos = [];
 
            if(relevesInfos !== undefined) {
                this.mapAndAddReleves(relevesInfos);
@@ -14,7 +15,7 @@ class Rapport {
 
         } else {
             this.date = moment().format('DD-MM-YYYY');
-            this.relevesInformations = [];
+            this.relevesInfos = [];
         }
     }
 
@@ -22,7 +23,7 @@ class Rapport {
 
         relesInfos.forEach(releve => {
 
-            this.relevesInformations.push(new ReleveInformations(ReleveInformations.of(releve.apportNutritionnel),
+            this.relevesInfos.push(new ReleveInformations(ApportNutritionnel.of(releve.apportNutritionnel),
                 releve.periode,
                 releve.tension,
                 releve.listPlats,
@@ -33,12 +34,12 @@ class Rapport {
     }
 
     addReleve(){
-        this.relevesInformations.push(new ReleveInformations());
+        this.relevesInfos.push(new ReleveInformations());
         return this;
     }
 
     deleteReleve(index){
-        this.relevesInformations.splice(index, index + 1);
+        this.relevesInfos.splice(index, index + 1);
         return this;
     }
 }

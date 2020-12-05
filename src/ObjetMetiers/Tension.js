@@ -6,6 +6,8 @@ class Tension{
         this.tensionDesc = tensionDesc;
     }
 
+
+
 }
 
 export default Tension;

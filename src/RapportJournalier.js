@@ -23,6 +23,11 @@ class RapportJournalier extends React.Component {
             apportNutritionnel: new ApportNutritionnel(0, 0, 0, 0, 0),
         }
 
+        fetch('http://localhost:8080/plat/list')
+            .then(result => result.json())
+            .then(plats => initialiseListPlats(plats))
+            .catch(error => console.log('for the url: http://localhost:8080/plat/list' + +' error:' + error));
+
     }
 
     addReleve() {
@@ -31,13 +36,13 @@ class RapportJournalier extends React.Component {
 
     handleDeleteReleve(index) {
         let rapportJournalier = this.state.rapportJournalier;
-        this.majApportNutritionnel(new ApportNutritionnel().getDelta(rapportJournalier.relevesInformations[index].apportNutritionnel));
+        this.majApportNutritionnel(new ApportNutritionnel().getDelta(rapportJournalier.relevesInfos[index].apportNutritionnel));
         this.setState({rapportJournalier: rapportJournalier.deleteReleve(index)});
     }
 
-    handleMajReleve(index, deltaApport, newApport) {
+    handleMajReleve(index, deltaApport, updatedReleve) {
         let rapportJournalier = this.state.rapportJournalier;
-        rapportJournalier.relevesInformations[index].apportNutritionnel = newApport;
+        rapportJournalier.relevesInfos[index] = updatedReleve;
         this.setState({rapportJournalier: rapportJournalier});
         this.majApportNutritionnel(deltaApport)
     }
@@ -57,7 +62,7 @@ class RapportJournalier extends React.Component {
         };
 
 
-        axios.post('http://localhost:8080/plat/add', result)
+        axios.post('http://localhost:8080/rapportJournalier/add', result)
             .then(response => {
                 console.log(response)
             })
@@ -69,7 +74,7 @@ class RapportJournalier extends React.Component {
 
     render() {
 
-        let result = this.state.rapportJournalier.relevesInformations.map((releve, index) =>
+        let result = this.state.rapportJournalier.relevesInfos.map((releve, index) =>
             <li style={{listStyleType: "none"}}>
                 <ReleveInfos
                     index={index}
@@ -81,6 +86,7 @@ class RapportJournalier extends React.Component {
                     periode={releve.new ? null : releve.periode}
                     handleDeleteReleve={(index) => this.handleDeleteReleve(index)}
                     handleMajReleve={(index, deltaApport, currentApport) => this.handleMajReleve(index, deltaApport, currentApport)}
+                    listPlats={listPlats}
                 />
             </li>)
 
@@ -88,46 +94,43 @@ class RapportJournalier extends React.Component {
         return <Container>
             <Form.Row>
                 <h3>Rapport journalier du {this.state.rapportJournalier.date} </h3>
-                <div className={"offset-md-6"}>
+                <div className={"offset-md-5"}>
                     <Button variant="success" type="submit">
                         Sauvegarder
                     </Button>
                 </div>
             </Form.Row>
-            <div className="col-md-12">
-                <Form onSubmit={this.handleSubmit}>
+            <Form.Row>
+                <div className="col-md-12">
+                    <Form onSubmit={this.handleSubmit}>
 
-                    <CompteurApportNutritionnel apportNutritionnel={this.state.apportNutritionnel}/>
+                        <CompteurApportNutritionnel apportNutritionnel={this.state.apportNutritionnel}/>
 
-                    <Button variant="primary" type="button" onClick={() => this.addReleve()}>
-                        Ajouter un relevé
-                    </Button>
+                        <Button variant="primary" type="button" onClick={() => this.addReleve()}>
+                            Ajouter un relevé
+                        </Button>
 
-                    <fieldset className="scheduler-border">
-                        <legend className="scheduler-border">Synthèse relevé</legend>
-                        <ul>
-                            {result}
-                        </ul>
-                    </fieldset>
+                        <fieldset className="scheduler-border">
+                            <legend className="scheduler-border">Synthèse relevé</legend>
+                            <ul>
+                                {result}
+                            </ul>
+                        </fieldset>
 
 
-                </Form>
-            </div>
+                    </Form>
+                </div>
+            </Form.Row>
         </Container>
     }
 }
 
-const periodeOptions = [
-    {value: 'MATIN', label: 'Matin', target: 'periode'},
-    {value: 'MIDI', label: 'Midi', target: 'periode'},
-    {value: 'SOIR', label: 'Soir', target: 'periode'},
-    {value: 'CUSTOM', label: 'Custom', target: 'periode'},
-];
-
 const listPlats = [];
 
 function initialiseListPlats(plats) {
-    plats.map(plat => listPlats.push({label: plat.nom, value: plat, target: 'plat'}))
+    if (listPlats.length === 0) {
+        plats.map(plat => listPlats.push({label: plat.nom, value: plat}));
+    }
 }
 
 export default withRouter(RapportJournalier);
