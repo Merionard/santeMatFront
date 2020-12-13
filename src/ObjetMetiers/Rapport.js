@@ -42,6 +42,15 @@ class Rapport {
         this.relevesInfos.splice(index, index + 1);
         return this;
     }
+
+    static toJson(rapportJournalier){
+        let json = {
+            date:rapportJournalier.date,
+            relevesInfos:ReleveInformations.toJson(rapportJournalier.relevesInfos)
+        }
+
+        return json;
+    }
 }
 
 export default Rapport;

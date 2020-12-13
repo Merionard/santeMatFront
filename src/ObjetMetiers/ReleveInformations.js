@@ -58,6 +58,22 @@ class ReleveInformations{
         return this;
     }
 
+    static toJson(releveInformations){
+
+        let releveInfos = [];
+        releveInformations.forEach(r=>{
+            let listPlats = [];
+            r.listPlats.forEach(plat=>{listPlats.push({nom:plat.nom})})
+            releveInfos.push({
+                apportNutritionnel:r.apportNutritionnel,
+                periode:r.periode,
+                tension:{t_montante:r.tensionMontante,t_descendante:r.tensionDesc},
+                listPlats:listPlats
+            })
+        })
+        return releveInfos;
+    }
+
 
 
 }

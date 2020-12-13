@@ -5,7 +5,6 @@ import CompteurApportNutritionnel from "./CompteurApportNutritionnel";
 import {withRouter} from "react-router-dom";
 import ApportNutritionnel from "./ObjetMetiers/ApportNutritionnel";
 import ReleveInfos from "./ReleveInfos";
-import axios from "axios";
 import Rapport from "./ObjetMetiers/Rapport";
 
 class RapportJournalier extends React.Component {
@@ -16,6 +15,7 @@ class RapportJournalier extends React.Component {
         this.handleDeleteReleve = this.handleDeleteReleve.bind(this);
         this.handleMajReleve = this.handleMajReleve.bind(this);
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
 
         this.state = {
             rapportJournalier: props.isNew ? new Rapport() :
@@ -55,21 +55,9 @@ class RapportJournalier extends React.Component {
 
 
     handleSubmit() {
-
-        const result = {
-            nom: this.state.nomPlat,
-            apportNutritionnel: this.state.apportNutritionnel
+        console.log(this.state.rapportJournalier)
+        this.props.saveRapport(this.state.rapportJournalier);
         };
-
-
-        axios.post('http://localhost:8080/rapportJournalier/add', result)
-            .then(response => {
-                console.log(response)
-            })
-            .catch(error => alert('une erreur est survenue dsl...' + error));
-
-
-    }
 
 
     render() {
@@ -95,7 +83,7 @@ class RapportJournalier extends React.Component {
             <Form.Row>
                 <h3>Rapport journalier du {this.state.rapportJournalier.date} </h3>
                 <div className={"offset-md-5"}>
-                    <Button variant="success" type="submit">
+                    <Button variant="success" type="button" onClick={() => this.props.saveRapport(this.state.rapportJournalier)}>
                         Sauvegarder
                     </Button>
                 </div>

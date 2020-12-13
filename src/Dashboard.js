@@ -3,6 +3,8 @@ import moment from "moment";
 import Container from "react-bootstrap/Container";
 import {Button, Form} from "react-bootstrap";
 import RapportJournalier from "./RapportJournalier";
+import axios from "axios";
+import Rapport from "./ObjetMetiers/Rapport";
 
 class Dashboard extends React.Component {
 
@@ -10,6 +12,7 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {noRapport: true,newRapport:false}
         this.addNewRapportJournalier = this.addNewRapportJournalier.bind(this);
+        this.saveRapportJournalier = this.saveRapportJournalier.bind(this);
 
         let date = moment().format('DD-MM-YYYY');
         fetch('http://localhost:8080/rapportJournalier/findByDate/' + date)
@@ -38,6 +41,20 @@ class Dashboard extends React.Component {
         this.setState({newRapport:true,noRapport:false});
     }
 
+    saveRapportJournalier(rapportJournalier){
+
+        console.log(Rapport.toJson(rapportJournalier));
+
+        axios.post('http://localhost:8080/rapportJournalier/add', Rapport.toJson(rapportJournalier))
+            .then(response => {
+                console.log(response)
+                if(response.status===200){
+                    alert('Le rapport a bien été enregistré')
+                }
+            })
+            .catch(error => alert('une erreur est survenue dsl...' + error));
+    }
+
 
     render() {
         if (this.state.noRapport) {
@@ -52,7 +69,8 @@ class Dashboard extends React.Component {
         }
         if (this.state.newRapport) {
             return <Container>
-                        <RapportJournalier isNew={true}/>
+                        <RapportJournalier isNew={true}
+                        saveRapport={(rapportJournalier)=>this.saveRapportJournalier(rapportJournalier)}/>
                     </Container>
         }
         return <Container>
@@ -61,6 +79,7 @@ class Dashboard extends React.Component {
                 date={this.state.rapportDate}
                 relevesInformations={this.state.relevesInfosRapport}
                 isNew={false}
+                saveRapport={(rapportJournalier)=>this.saveRapportJournalier(rapportJournalier)}
             />
         </Container>
 
