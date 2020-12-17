@@ -7,16 +7,17 @@ import {withRouter} from "react-router-dom";
 import Select from "react-select";
 import ApportNutritionnel from "./ObjetMetiers/ApportNutritionnel";
 import ReleveInformations from "./ObjetMetiers/ReleveInformations";
+import Utils from "./Utils/Utils";
 
 class ReleveInfos extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
         this.handleChangeTension = this.handleChangeTension.bind(this);
         this.addOrRemovePlat = this.addOrRemovePlat.bind(this);
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
+        this.initialisePlats = this.initialisePlats.bind(this);
 
         this.state = {
             relevesInformations: props.new? new ReleveInformations():
@@ -24,7 +25,7 @@ class ReleveInfos extends React.Component {
                 props.periode,
                 props.tensionMontante,
                 props.tensionDesc,
-                props.listPlats,
+                props.plats,
                 false,
                 props.id),
 
@@ -37,9 +38,6 @@ class ReleveInfos extends React.Component {
     }
 
 
-    handleSubmit() {
-
-    }
 
     addOrRemovePlat(event) {
         if (event == null) {
@@ -79,6 +77,13 @@ class ReleveInfos extends React.Component {
         });
     }
 
+    initialisePlats(){
+        let result = [];
+        this.state.relevesInformations.listPlats.forEach(
+            plat=>result.push(this.props.listPlats.find(option=>option.label === plat.nom)));
+        return result;
+    }
+
     render() {
         return <Container>
             <h3>Relevé d'informations</h3>
@@ -94,7 +99,9 @@ class ReleveInfos extends React.Component {
                                 id="periode"
                                 label="Période déclaration"
                                 options={periodeOptions}
-                                handleChange={this.handleSelectChange}>
+                                handleChange={this.handleSelectChange}
+                                defaultValue={this.state.relevesInformations.periode !== null ?
+                                    Utils.getValueIndexFromArray(this.state.relevesInformations.periode, periodeOptions) : ""}>
                             </MySelect>
                         </Form.Group>
                     </Form.Row>
@@ -133,6 +140,7 @@ class ReleveInfos extends React.Component {
                                 isMulti
                                 className="basic-multi-select"
                                 classNamePrefix="select"
+                                value={this.initialisePlats(this.state.relevesInformations.listPlats,this.props.listPlats)}
                             />
                         </div>
                     </Form.Row>

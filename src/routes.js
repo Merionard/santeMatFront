@@ -22,15 +22,15 @@ import ListPlats from "./ListPlats";
 import Plat from "./Plat";
 import ListIngredients from "./ListIngredients";
 import FormIngredient from "./FormIngredient";
-import RapportJournalier from "./RapportJournalier";
+import board from "./Dashboard";
 
 const dashboardRoutes = [
 
     {
-        path: "/rapportJournalier",
-        name: "Rapport journalier",
+        path: "/Dashboard",
+        name: "Dashboard",
         icon: Dashboard,
-        component: RapportJournalier,
+        component: board,
         layout: "",
     },
     {

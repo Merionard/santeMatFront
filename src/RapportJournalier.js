@@ -15,19 +15,23 @@ class RapportJournalier extends React.Component {
         this.handleDeleteReleve = this.handleDeleteReleve.bind(this);
         this.handleMajReleve = this.handleMajReleve.bind(this);
         this.majApportNutritionnel = this.majApportNutritionnel.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.initialiseListPlats = this.initialiseListPlats.bind(this);
 
         this.state = {
             rapportJournalier: props.isNew ? new Rapport() :
-                new Rapport(false, props.id, props.date, props.relevesInformations),
-            apportNutritionnel: new ApportNutritionnel(0, 0, 0, 0, 0),
+                new Rapport(false, props.date, props.relevesInformations),
+            apportNutritionnel: props.isNew?new ApportNutritionnel(0, 0, 0, 0, 0): props.apportNutritionnel,
+            listPlats:[],
         }
 
+
+    }
+
+    componentDidMount() {
         fetch('http://localhost:8080/plat/list')
             .then(result => result.json())
-            .then(plats => initialiseListPlats(plats))
+            .then(plats => this.initialiseListPlats(plats))
             .catch(error => console.log('for the url: http://localhost:8080/plat/list' + +' error:' + error));
-
     }
 
     addReleve() {
@@ -53,11 +57,15 @@ class RapportJournalier extends React.Component {
         this.setState({apportNutritionnel: apportNutritionnel});
     }
 
+     initialiseListPlats(plats) {
+        if (this.state.listPlats.length === 0) {
+            let listPlats = []
+            plats.map(plat => listPlats.push({label: plat.nom, value: plat}));
+            this.setState({listPlats:listPlats});
+        }
+    }
 
-    handleSubmit() {
-        console.log(this.state.rapportJournalier)
-        this.props.saveRapport(this.state.rapportJournalier);
-        };
+
 
 
     render() {
@@ -68,15 +76,17 @@ class RapportJournalier extends React.Component {
                     index={index}
                     new={releve.new}
                     apportNutritionnel={releve.new ? null : releve.apportNutritionnel}
-                    tensionMontante={releve.new ? null : releve.tension.tensionMontante}
-                    tensionDescendante={releve.new ? null : releve.tension.tensionDesc}
+                    tensionMontante={releve.new ? null : releve.tensionMontante}
+                    tensionDesc={releve.new ? null : releve.tensionDesc}
                     plats={releve.new ? null : releve.listPlats}
                     periode={releve.new ? null : releve.periode}
                     handleDeleteReleve={(index) => this.handleDeleteReleve(index)}
                     handleMajReleve={(index, deltaApport, currentApport) => this.handleMajReleve(index, deltaApport, currentApport)}
-                    listPlats={listPlats}
+                    listPlats={this.state.listPlats}
                 />
             </li>)
+
+        console.log(result);
 
 
         return <Container>
@@ -113,12 +123,5 @@ class RapportJournalier extends React.Component {
     }
 }
 
-const listPlats = [];
-
-function initialiseListPlats(plats) {
-    if (listPlats.length === 0) {
-        plats.map(plat => listPlats.push({label: plat.nom, value: plat}));
-    }
-}
 
 export default withRouter(RapportJournalier);

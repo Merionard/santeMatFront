@@ -5,6 +5,7 @@ import {Button, Form} from "react-bootstrap";
 import RapportJournalier from "./RapportJournalier";
 import axios from "axios";
 import Rapport from "./ObjetMetiers/Rapport";
+import ApportNutritionnel from "./ObjetMetiers/ApportNutritionnel";
 
 class Dashboard extends React.Component {
 
@@ -28,9 +29,9 @@ class Dashboard extends React.Component {
                     this.setState(
                         {
                             noRapport: false,
-                            rapportId: rapport.id,
                             rapportDate: rapport.date,
-                            relevesInfosRapport: rapport.relevesInfos
+                            relevesInfos: rapport.relevesInfos,
+                            apportNutritionnel:ApportNutritionnel.getApportFromReleves(rapport.relevesInfos)
                         });
                 }
             })
@@ -75,11 +76,11 @@ class Dashboard extends React.Component {
         }
         return <Container>
             <RapportJournalier
-                id={this.state.rapportId}
                 date={this.state.rapportDate}
-                relevesInformations={this.state.relevesInfosRapport}
+                relevesInformations={this.state.relevesInfos}
                 isNew={false}
                 saveRapport={(rapportJournalier)=>this.saveRapportJournalier(rapportJournalier)}
+                apportNutritionnel = {this.state.apportNutritionnel}
             />
         </Container>
 

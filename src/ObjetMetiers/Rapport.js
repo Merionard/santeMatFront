@@ -3,9 +3,8 @@ import moment from "moment";
 import ApportNutritionnel from "./ApportNutritionnel";
 
 class Rapport {
-    constructor(isNew = true, id, date, relevesInfos) {
+    constructor(isNew = true, date, relevesInfos) {
         if (!isNew) {
-            this.id = id;
             this.date = date;
             this.relevesInfos = [];
 
@@ -25,7 +24,8 @@ class Rapport {
 
             this.relevesInfos.push(new ReleveInformations(ApportNutritionnel.of(releve.apportNutritionnel),
                 releve.periode,
-                releve.tension,
+                releve.tension.t_montante,
+                releve.tension.t_descendante,
                 releve.listPlats,
                 false,
                 releve.id
